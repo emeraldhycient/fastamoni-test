@@ -19,7 +19,6 @@ const Dashboard = ({ navigation }: any) => {
             try {
                 const req = await userService.getUser()
                 if (req.status === 200) {
-                    console.log(req.data)
                     setUser(req?.data?.data)
                     setuser(req?.data?.data)
                 }

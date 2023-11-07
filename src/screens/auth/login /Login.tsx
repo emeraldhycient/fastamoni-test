@@ -16,8 +16,8 @@ const Login = ({ navigation }: any) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
 
-  const [eemail, seteemail] = useState("eve.holt@reqres.in")
-  const [password, setpassword] = useState("cityslicka")
+  const [eemail, seteemail] = useState("")
+  const [password, setpassword] = useState("")
 
   const [isLoading, setisLoading] = useState(false)
 
