@@ -1,7 +1,7 @@
 import axiosClient from "../../helpers/apiClient";
 
 
-class authService {
+class AuthService {
     async login({email,password}:{email:string,password:string}) {
         const response = await axiosClient.post('/login', {email,password});
         return response;
@@ -12,3 +12,7 @@ class authService {
         return response;
     }
 }
+
+const authService = new AuthService();
+
+export default authService;

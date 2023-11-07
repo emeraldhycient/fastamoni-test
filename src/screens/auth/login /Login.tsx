@@ -8,20 +8,49 @@ import CustomTextInput from '../../../components/common/CustomTextInput';
 import Colors from '../../../theme/colors';
 import Button from '../../../components/common/button';
 import useAuthenticationState from '../../../states/zustandStore/authentication';
+import Alert from '../../../helpers/alert';
+import authService from '../../../services/auth/auth.service';
 
 const Login = ({ navigation }: any) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
 
+  const [eemail, seteemail] = useState("")
+  const [password, setpassword] = useState("")
+
+  const [isLoading, setisLoading] = useState(false)
+
+  const handlelogin = async () => {
+    if (password && eemail) {
+      setisLoading(true)
+      try {
+        const req = await authService.login({ email: eemail, password })
+        setisLoading(false)
+        if (req.status === 200) {
+          Alert.success("login sucessfull")
+          setIsAuthenticated(true)
+        }
+      } catch (error: any) {
+        setisLoading(false)
+        Alert.error(error?.response?.data?.error)
+      }
+
+    } else {
+      Alert.error("please enter password and email")
+    }
+  }
+
+
+  //TODO: switch all validation to formik and yup in real app
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <CustomHeader title='Sign in to fastamoni' leftIcon={<MaterialCommunityIcons name='arrow-left' size={20} />} onLeftPress={() => navigation.goBack()} />
       <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
         <CustomText style={{ marginBottom: 10 }}>Email Address</CustomText>
-        <CustomTextInput placeholder="Enter your email address" />
+        <CustomTextInput value={eemail} onChangeText={(text: string) => seteemail(text)} placeholder="Enter your email address" />
         <CustomText style={{ marginVertical: 10 }}>Password </CustomText>
-        <CustomTextInput placeholder="Password" right={
+        <CustomTextInput value={password} onChangeText={(text: string) => setpassword(text)} placeholder="Password" right={
           <TextInput.Icon
             icon={secureTextEntry ? "eye" : "eye-off"}
             onPress={() => {
@@ -32,14 +61,17 @@ const Login = ({ navigation }: any) => {
           />
         } />
         <View style={{ width: "100%", marginHorizontal: "auto", flexDirection: "column", justifyContent: "space-between", marginTop: 40 }}>
-          <Button title='Sign in to your account' onPress={() => setIsAuthenticated(true)} br={6} h={50} color={Colors.white} bg={Colors.primary} />
+          {
+            !isLoading &&
+            <Button title='Sign in to your account' onPress={!isLoading && handlelogin} br={6} h={50} color={Colors.white} bg={Colors.primary} />
+          }
 
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
             <TouchableRipple onPress={() => navigation.navigate("SignUp")}>
               <View style={{ flexDirection: "row" }}>
                 <CustomText style={{ marginVertical: 10, textAlign: "center", fontSize: 14, fontWeight: "400" }}>Don't have an account? </CustomText>
                 <TouchableRipple onPress={() => navigation.navigate("SignUp")}>
-                  <CustomText style={{ marginVertical: 10, textAlign: "center", fontSize: 14, fontWeight: "400",color:Colors.primary   }}>Sign up</CustomText>
+                  <CustomText style={{ marginVertical: 10, textAlign: "center", fontSize: 14, fontWeight: "400", color: Colors.primary }}>Sign up</CustomText>
                 </TouchableRipple>
               </View>
             </TouchableRipple>

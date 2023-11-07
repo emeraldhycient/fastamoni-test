@@ -9,6 +9,8 @@ import {
 } from "react-native-paper";
 import useAuthenticationState from './src/states/zustandStore/authentication';
 import MainStack from './src/routers/main';
+import FlashMessage from "react-native-flash-message";
+
 
 export default function App() {
   const isAuthenticated = useAuthenticationState((state) => state.authentication.isAuthenticated);
@@ -44,6 +46,7 @@ export default function App() {
               <MainStack />
           }
         </PaperProvider>
+        <FlashMessage position="bottom" />
       </NavigationContainer>
     </View>
   );

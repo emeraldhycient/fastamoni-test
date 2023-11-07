@@ -7,19 +7,53 @@ import CustomText from '../../../components/common/CustomText';
 import CustomTextInput from '../../../components/common/CustomTextInput';
 import Colors from '../../../theme/colors';
 import Button from '../../../components/common/button';
+import useAuthenticationState from '../../../states/zustandStore/authentication';
+import Alert from '../../../helpers/alert';
+import authService from '../../../services/auth/auth.service';
 
 const SignUp = ({ navigation }: any) => {
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [checked, setChecked] = React.useState(false);
+
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
+
+  const [eemail, seteemail] = useState("")
+  const [password, setpassword] = useState("")
+
+  const [isLoading, setisLoading] = useState(false)
+
+  const handlelogin = async () => {
+    if (password && eemail) {
+      setisLoading(true)
+      try {
+        const req = await authService.createAccount({ email: eemail, password })
+        setisLoading(false)
+        if (req.status === 200) {
+          Alert.success("registration sucessfull")
+          navigation.navigate("Login")
+        }
+      } catch (error: any) {
+        setisLoading(false)
+        Alert.error(error?.response?.data?.error)
+      }
+
+    } else {
+      Alert.error("please enter password and email")
+    }
+  }
+
+
+  //TODO: switch all validation to formik and yup in real app
+
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <CustomHeader title='Create Account' leftIcon={<MaterialCommunityIcons name='arrow-left' size={20} />} onLeftPress={() => navigation.goBack()} />
       <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
         <CustomText style={{ marginBottom: 10 }}>Email</CustomText>
-        <CustomTextInput placeholder="Enter Email" />
+        <CustomTextInput value={eemail} onChangeText={(text: string) => seteemail(text)} placeholder="Enter your email address" />
         <CustomText style={{ marginVertical: 10 }}>Create Password </CustomText>
-        <CustomTextInput placeholder="Password" right={
+        <CustomTextInput value={password} onChangeText={(text: string) => setpassword(text)} placeholder="Password" right={
           <TextInput.Icon
             icon={secureTextEntry ? "eye" : "eye-off"}
             onPress={() => {
@@ -41,7 +75,10 @@ const SignUp = ({ navigation }: any) => {
             <CustomText style={{ fontSize: 14, fontWeight: '300', lineHeight: 24, textAlign: "center" }}>By continuing, you agree to our  <CustomText style={{ marginTop: 20, fontSize: 14, fontWeight: '300', lineHeight: 24, textAlign: "center", color: Colors.primary }}>Terms of Service , Broadcaster Agreement & Privacy Policy</CustomText></CustomText>
           </View>
         </View>
-        <Button title='Get Started' onPress={() => navigation.navigate("Verification")} br={6} h={50} color={Colors.white} bg={Colors.primary} />
+        {
+          !isLoading &&
+          <Button title='Get Started' onPress={handlelogin} br={6} h={50} color={Colors.white} bg={Colors.primary} />
+        }
       </View>
     </View>
   )
