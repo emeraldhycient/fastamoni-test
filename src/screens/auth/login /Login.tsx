@@ -10,13 +10,14 @@ import Button from '../../../components/common/button';
 import useAuthenticationState from '../../../states/zustandStore/authentication';
 import Alert from '../../../helpers/alert';
 import authService from '../../../services/auth/auth.service';
+import { setToken } from '../../../states/asyncStore/token';
 
 const Login = ({ navigation }: any) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
 
-  const [eemail, seteemail] = useState("")
-  const [password, setpassword] = useState("")
+  const [eemail, seteemail] = useState("eve.holt@reqres.in")
+  const [password, setpassword] = useState("cityslicka")
 
   const [isLoading, setisLoading] = useState(false)
 
@@ -26,7 +27,9 @@ const Login = ({ navigation }: any) => {
       try {
         const req = await authService.login({ email: eemail, password })
         setisLoading(false)
+        console.log(req?.data)
         if (req.status === 200) {
+          setToken(req?.data?.token)
           Alert.success("login sucessfull")
           setIsAuthenticated(true)
         }

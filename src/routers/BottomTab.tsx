@@ -6,6 +6,7 @@ import Colors from "../theme/colors";
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
+import EditProfile from "../screens/profile/editProfile";
 
 
 
@@ -60,7 +61,7 @@ function BottomTab() {
      
       <Screen
         name="profile"
-        component={Dashboard}
+        component={EditProfile}
         options={{
           headerShown: false,
           tabBarLabel: "Account",
